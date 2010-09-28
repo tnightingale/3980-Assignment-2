@@ -2,39 +2,24 @@
 #include <tchar.h>
 
 LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
-    static HANDLE hComm;	
-    static BOOL   connectMode = FALSE;
-    static TCHAR  *buffer = (TCHAR*) calloc(1024, sizeof(TCHAR));
-    static HANDLE thread;
-    static UINT   cxClient = 600;
-    static UINT   cyClient = 400;
-
-    PCPARAMS    commonParams;
+    PCPARAMS    cp;
     HDC         hdc;
     PAINTSTRUCT ps;
-    PPARAMS     threadParams;
-
+    RECT        windowRect;
     TEXTMETRIC  tm;
 
     switch (Message)
 	{
-    case WM_CREATE:
-        commonParams = (PCPARAMS)malloc(sizeof(CPARAMS));
-        SetWindowLongPtr(hwnd, 0, (LONG) commonParams);
-        return 0;
 
     case WM_COMMAND:
-        if (connectMode) {
+        cp = (PCPARAMS)GetWindowLongPtr(hwnd, 0);
+        if (cp->connectMode) {
             MessageBox(NULL, TEXT("Unable to change settings while in Connect Mode, press ESC to return to Command Mode"), TEXT(""), MB_OK);
             return 0;
         }
-        if (MainMenu(hwnd, &hComm, LOWORD (wParam))) {
-            connectMode = TRUE;
-            threadParams = (PPARAMS)malloc(sizeof(PARAMS));
-            threadParams->hComm = &hComm;
-            threadParams->buffer = &buffer;
-            threadParams->connectMode = &connectMode;
-            if ((thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Receive, threadParams, 0, NULL)) == NULL) {
+        if (MainMenu(hwnd, LOWORD (wParam), cp)) {
+            cp->connectMode = TRUE;
+            if ((cp->thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Receive, cp, 0, NULL)) == NULL) {
                 MessageBox (NULL, TEXT("Error loading recesive thread"), TEXT(""), MB_OK);
                 return 0;
             }
@@ -42,42 +27,38 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_CHAR:
-        commonParams = (PCPARAMS) GetWindowLongPtr(hwnd,0);
-        if (connectMode) {
+        cp = (PCPARAMS) GetWindowLongPtr(hwnd,0);
+        if (cp->connectMode) {
             if(VK_ESCAPE == wParam) {
                 SetWindowText(hwnd, TEXT("Dumb Terminal - Command Mode"));
-                CloseHandle(hComm);
-                commonParams->connectMode = FALSE;
+                CloseHandle(cp->hComm);
+                cp->connectMode = FALSE;
                 return 0;
             }
-            if(!Transmit(hwnd,hComm, wParam)) {
+            if(!Transmit(hwnd, wParam, cp)) {
                 MessageBox (NULL, TEXT("Error sending data"), TEXT(""), MB_OK);
                 return 0;
             }
-            _stprintf(buffer,TEXT("%s%c"), buffer, wParam);
+            _stprintf(cp->buffer,TEXT("%s%c"), cp->buffer, wParam);
             InvalidateRect(hwnd,NULL,TRUE);
         }
         return 0;
 
-    case WM_SIZE:
-        cxClient = LOWORD (lParam);
-        cyClient = HIWORD (lParam);
-        return 0;
-
     case WM_PAINT:
+        cp = (PCPARAMS) GetWindowLongPtr(hwnd,0);
         hdc = BeginPaint(hwnd, &ps);
         SelectObject(hdc, GetStockObject(ANSI_FIXED_FONT));
         GetTextMetrics(hdc, &tm);
-
-        for(int i = 0; i < 1024 / (cxClient / tm.tmAveCharWidth); i++) {
-            TextOut(hdc, 0, i * tm.tmHeight, buffer + (i * cxClient / tm.tmAveCharWidth), (cxClient / tm.tmAveCharWidth));
+        GetClientRect(hwnd, &windowRect);
+        for(size_t i = 0; i < 1024 / (windowRect.right / tm.tmAveCharWidth); i++) {
+            TextOut(hdc, 0, i * tm.tmHeight, cp->buffer + (i * windowRect.right / tm.tmAveCharWidth), (windowRect.right / tm.tmAveCharWidth));
         }
 
         EndPaint(hwnd,&ps);
         return 0;
 
     case WM_DESTROY:
-        CloseHandle(hComm);
+        cp = (PCPARAMS) GetWindowLongPtr(hwnd,0);
       	PostQuitMessage (0);
 		return 0;
 	}

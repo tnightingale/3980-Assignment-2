@@ -24,19 +24,19 @@ BOOL PrepareConnection(HANDLE hComm, DCB config) {
     return TRUE;
 }
 
-BOOL OpenConnection(HWND hwnd, HANDLE *hComm, LPCTSTR szPortName) {
+BOOL OpenConnection(HWND hwnd, LPCTSTR szPortName, PCPARAMS cp) {
     COMMCONFIG	cc;
 
     cc.dwSize = sizeof(COMMCONFIG);
 	cc.wVersion = 1;
-	GetCommConfig (*hComm, &cc, &cc.dwSize);
+	GetCommConfig (cp->hComm, &cc, &cc.dwSize);
     if (!CommConfigDialog(szPortName, hwnd, &cc)) {
         return FALSE;
     }
-    if ((*hComm = CreateConnection(szPortName)) == INVALID_HANDLE_VALUE) {
+    if ((cp->hComm = CreateConnection(szPortName)) == INVALID_HANDLE_VALUE) {
         return FALSE;
     }
-    if (!PrepareConnection(*hComm, cc.dcb) ) {
+    if (!PrepareConnection(cp->hComm, cc.dcb) ) {
         return FALSE;
     }
     return TRUE;

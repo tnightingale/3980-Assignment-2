@@ -4,12 +4,12 @@
 UINT Receive(LPVOID params) {
     TCHAR buffer = NULL;
     DWORD read;
-    Pparams tp = (Pparams) params;
+    PCPARAMS cp = (PCPARAMS) params;
 
-    while(*tp->connectMode) {
-        if(ReadFile(*tp->hComm, &buffer, sizeof(TCHAR), &read, NULL)) {
+    while(cp->connectMode) {
+        if(ReadFile(cp->hComm, &buffer, 1, &read, NULL)) {
             if (buffer != NULL) {
-                _stprintf(*tp->buffer, TEXT("%s%c"), *tp->buffer, buffer);
+                _stprintf(cp->buffer, TEXT("%s%c"), cp->buffer, buffer);
             }
         } else {
             MessageBox (NULL, TEXT("Error reading file"), TEXT(""), MB_OK);

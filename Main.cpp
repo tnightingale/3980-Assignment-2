@@ -5,11 +5,12 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdPara
 	MSG      Msg;
     TCHAR    szAppName[] = TEXT("Dumb Terminal - Command Mode");
     WNDCLASS wndclass ;
+    CPARAMS *cp;
 
     wndclass.style         = CS_HREDRAW | CS_VREDRAW;
     wndclass.lpfnWndProc   = WndProc; 
-    wndclass.cbClsExtra    = sizeof(PCPARAMS);
-    wndclass.cbWndExtra    = 0;
+    wndclass.cbClsExtra    = 0;
+    wndclass.cbWndExtra    = sizeof(PCPARAMS);
     wndclass.hInstance     = hInst;
     wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION);     
     wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW);         
@@ -22,8 +23,16 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdPara
 
 	hwnd = CreateWindow (szAppName, szAppName, WS_OVERLAPPEDWINDOW, 10, 10,
    							600, 400, NULL, NULL, hInst, NULL);
-	ShowWindow (hwnd, nCmdShow);
+    
+    cp = (PCPARAMS)malloc(sizeof(CPARAMS));
+    cp->buffer = (TCHAR*) calloc(1024, sizeof(TCHAR));
+    cp->connectMode = FALSE;
+    SetWindowLongPtr(hwnd, 0, (LONG) cp);
+    
+    ShowWindow (hwnd, nCmdShow);
 	UpdateWindow (hwnd);
+
+
 
 	while (GetMessage (&Msg, NULL, 0, 0))
 	{
