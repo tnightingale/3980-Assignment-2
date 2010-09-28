@@ -7,8 +7,8 @@ HANDLE CreateConnection(LPCTSTR szPortName) {
 BOOL PrepareConnection(HANDLE hComm, DCB config) {
     COMMTIMEOUTS comTimeOut;
 
-    comTimeOut.ReadIntervalTimeout = 1;
-    comTimeOut.ReadTotalTimeoutMultiplier = 1;
+    comTimeOut.ReadIntervalTimeout = 3;
+    comTimeOut.ReadTotalTimeoutMultiplier = 3;
     comTimeOut.ReadTotalTimeoutConstant = 1;
     comTimeOut.WriteTotalTimeoutMultiplier = 1;
     comTimeOut.WriteTotalTimeoutConstant = 1;

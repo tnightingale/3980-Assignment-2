@@ -25,7 +25,10 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdPara
    							600, 400, NULL, NULL, hInst, NULL);
     
     cp = (PCPARAMS)malloc(sizeof(CPARAMS));
-    cp->buffer = (TCHAR*) calloc(1024, sizeof(TCHAR));
+    cp->maxChars = 1;
+    cp->numChars = 0;
+    cp->buffer = (TCHAR*) malloc(cp->maxChars * sizeof(TCHAR));
+    cp->buffer[0] = ' ';
     cp->connectMode = FALSE;
     SetWindowLongPtr(hwnd, 0, (LONG) cp);
     

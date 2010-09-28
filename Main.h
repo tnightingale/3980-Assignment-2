@@ -3,11 +3,12 @@
 #include <Windows.h>
 
 typedef struct _common_params_ {
-    HANDLE  hComm;	
-    BOOL    connectMode;
-    TCHAR   *buffer;
-    UINT    numChars;
-    HANDLE  thread;
+    HANDLE   hComm;	
+    BOOL     connectMode;
+    HANDLE   thread;
+    TCHAR    *buffer;
+    UINT     numChars;
+    UINT     maxChars;
 } *PCPARAMS, CPARAMS;
 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM);
@@ -17,4 +18,5 @@ UINT Receive(PVOID);
 HANDLE CreateConnection(LPCTSTR);
 BOOL PrepareConnection(HANDLE, DCB);
 BOOL OpenConnection(HWND hwnd, LPCTSTR szPortName, PCPARAMS cp);
+VOID AddData(TCHAR newData, PCPARAMS cp);
 #endif

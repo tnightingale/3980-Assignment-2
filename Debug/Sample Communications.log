@@ -1,13 +1,10 @@
-﻿Build started 9/27/2010 7:38:22 PM.
+﻿Build started 9/27/2010 8:43:36 PM.
 Project "C:\Documents and Settings\Administrator\My Documents\Visual Studio 2010\Projects\Sample Communications\Sample Communications\Sample Communications.vcxproj" on node 2 (build target(s)).
 InitializeBuildStatus:
-  Touching "Debug\Dumb Terminal.unsuccessfulbuild".
+  Creating "Debug\Dumb Terminal.unsuccessfulbuild" because "AlwaysCreate" was specified.
 ClCompile:
-  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt WndProc.cpp
-  WndProc.cpp
-c:\documents and settings\administrator\my documents\visual studio 2010\projects\sample communications\sample communications\wndproc.cpp(42): warning C4996: '_swprintf': This function or variable may be unsafe. Consider using _swprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-          c:\program files\microsoft visual studio 10.0\vc\include\wchar.h(761) : see declaration of '_swprintf'
-c:\documents and settings\administrator\my documents\visual studio 2010\projects\sample communications\sample communications\wndproc.cpp(53): warning C4018: '<' : signed/unsigned mismatch
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Buffer.cpp
+  Buffer.cpp
 ResourceCompile:
   All outputs are up-to-date.
 ManifestResourceCompile:
@@ -35,4 +32,4 @@ Done Building Project "C:\Documents and Settings\Administrator\My Documents\Visu
 
 Build succeeded.
 
-Time Elapsed 00:00:02.74
+Time Elapsed 00:00:02.31

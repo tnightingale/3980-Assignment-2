@@ -7,6 +7,8 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
     PAINTSTRUCT ps;
     RECT        windowRect;
     TEXTMETRIC  tm;
+    size_t      i;
+    UINT        printableChars;
 
     switch (Message)
 	{
@@ -39,8 +41,6 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
                 MessageBox (NULL, TEXT("Error sending data"), TEXT(""), MB_OK);
                 return 0;
             }
-            _stprintf(cp->buffer,TEXT("%s%c"), cp->buffer, wParam);
-            InvalidateRect(hwnd,NULL,TRUE);
         }
         return 0;
 
@@ -50,8 +50,13 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
         SelectObject(hdc, GetStockObject(ANSI_FIXED_FONT));
         GetTextMetrics(hdc, &tm);
         GetClientRect(hwnd, &windowRect);
-        for(size_t i = 0; i < 1024 / (windowRect.right / tm.tmAveCharWidth); i++) {
-            TextOut(hdc, 0, i * tm.tmHeight, cp->buffer + (i * windowRect.right / tm.tmAveCharWidth), (windowRect.right / tm.tmAveCharWidth));
+        for(i = 0; i <= cp->numChars / (windowRect.right / tm.tmAveCharWidth); i++) {
+            if (i * (windowRect.right / tm.tmAveCharWidth) + (windowRect.right / tm.tmAveCharWidth) >= cp->maxChars) {
+                printableChars = cp->maxChars - i * (windowRect.right / tm.tmAveCharWidth);
+                TextOut(hdc, 0, i * tm.tmHeight, cp->buffer + (i * windowRect.right / tm.tmAveCharWidth), printableChars);
+            } else {
+                TextOut(hdc, 0, i * tm.tmHeight, cp->buffer + (i * windowRect.right / tm.tmAveCharWidth), (windowRect.right / tm.tmAveCharWidth));
+            }
         }
 
         EndPaint(hwnd,&ps);

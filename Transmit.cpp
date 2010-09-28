@@ -6,5 +6,6 @@ BOOL Transmit(HWND hwnd, TCHAR transmitChar, PCPARAMS cp) {
         MessageBox (NULL, TEXT("Can't send"), TEXT(""), MB_OK);
         return FALSE;
     }
+    AddData(transmitChar, cp);
     return TRUE;
 }
