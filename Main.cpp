@@ -1,3 +1,36 @@
+/************************************************************************
+* SOURCE FILE : Main.cpp 
+* PROGRAM     : Dumb Terminal
+* FUNCTIONS   : 
+*        LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM);
+*        VOID MainMenu(HWND hwnd, UINT param, PCPARAMS cp);
+*        BOOL Transmit(TCHAR transmitChar, PCPARAMS cp);
+*        VOID Receive(PVOID);
+*        HANDLE CreateConnection(LPCTSTR);
+*        BOOL PrepareConnection(HANDLE, DCB);
+*        BOOL OpenConnection(HWND hwnd, LPCTSTR szPortName, PCPARAMS cp);
+*        VOID AddData(TCHAR newData, PCPARAMS cp);
+* DATE        : September 27, 2010
+* REVISIONS   : None
+* DESIGNER    : Nick Huber
+* PROGRAMMER  : Nick Huber
+* NOTES       : 
+*
+* This program creates a connection over a serial cable connected to COM1 -> COM4.
+* The program operates in 2 different modes, Command Mode and Connect Mode.
+*
+* Command Mode is for setting up a connection and managing the various settings
+* related to a serial port. No communication is done while in Command Mode.
+*
+* Connect Mode is where the serial communication takes place, no settings are
+* allowed to be changed while in this mode. The <ESC> key returns the user to
+* Command Mode.
+*
+* While in Connect Mode any character typed or recieved from the connected peer is
+* displayed onto the window.
+*
+*************************************************************************/
+
 #include "Main.h"
 
 int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam, int nCmdShow) {

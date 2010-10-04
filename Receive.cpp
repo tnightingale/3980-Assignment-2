@@ -1,7 +1,24 @@
 #include "Main.h"
-#include <tchar.h>
+#include "Buffer.h"
 
-UINT Receive(LPVOID params) {
+/************************************************************************
+* SOURCE FILE : Receive.cpp 
+* PROGRAM     : Dumb Terminal
+* FUNCTION    : VOID Receive(LPVOID params)
+*                    LPVOID params   - PCPARAMS struct containing all the data needed to read from an
+*                                      open file and record the data to a buffer
+* RETURNS     : VOID
+* DATE        : September 27, 2010
+* REVISIONS   : None
+* DESIGNER    : Nick Huber
+* PROGRAMMER  : Nick Huber
+* NOTES       : 
+* 
+* This function is spawned as a thread which runs until Connect Mode is ended.
+* It polls the device until it finds a character and then calls AddData() to 
+* add it into the output.
+*************************************************************************/
+VOID Receive(LPVOID params) {
     TCHAR buffer = NULL;
     DWORD read;
     PCPARAMS cp = (PCPARAMS) params;
@@ -12,13 +29,10 @@ UINT Receive(LPVOID params) {
                 AddData(buffer, cp);
             }
         } else {
-            MessageBox (NULL, TEXT("Error reading file"), TEXT(""), MB_OK);
+            continue;
         }
         buffer = NULL;
-
-        // prevent this thread from hogging CPU time
-        Sleep(10);
     }
 
-    return 0;
+    return;
 }

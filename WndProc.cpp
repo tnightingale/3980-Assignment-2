@@ -1,14 +1,30 @@
 #include "Main.h"
-#include <tchar.h>
+#include "MenuItems.h"
+#include "Transmit.h"
+#include "Receive.h"
+#include "Buffer.h"
 
+/************************************************************************
+* SOURCE FILE : WndProc.cpp 
+* PROGRAM     : Dumb Terminal
+* FUNCTION    : LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
+*                    HWND hwnd     - A handle to the window
+*                    UINT Message  - The message to handle
+*                    WPARAM wParam - wParam parameters
+*                    LPARAM lParam - lParam parameters
+* RETURNS     : LRESULT
+* DATE        : September 27, 2010a
+* REVISIONS   : None
+* DESIGNER    : Nick Huber
+* PROGRAMMER  : Nick Huber
+* NOTES       : 
+* 
+* The WndProc for the terminal program, all messages are handled here
+*************************************************************************/
 LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
     PCPARAMS    cp;
     HDC         hdc;
     PAINTSTRUCT ps;
-    RECT        windowRect;
-    TEXTMETRIC  tm;
-    size_t      i;
-    UINT        printableChars;
 
     switch (Message)
 	{
@@ -19,13 +35,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
             MessageBox(NULL, TEXT("Unable to change settings while in Connect Mode, press ESC to return to Command Mode"), TEXT(""), MB_OK);
             return 0;
         }
-        if (MainMenu(hwnd, LOWORD (wParam), cp)) {
-            cp->connectMode = TRUE;
-            if ((cp->thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Receive, cp, 0, NULL)) == NULL) {
-                MessageBox (NULL, TEXT("Error loading recesive thread"), TEXT(""), MB_OK);
-                return 0;
-            }
-        }
+        MainMenu(hwnd, LOWORD (wParam), cp);
         return 0;
 
     case WM_CHAR:
@@ -37,7 +47,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
                 cp->connectMode = FALSE;
                 return 0;
             }
-            if(!Transmit(hwnd, wParam, cp)) {
+            if(!Transmit(wParam, cp)) {
                 MessageBox (NULL, TEXT("Error sending data"), TEXT(""), MB_OK);
                 return 0;
             }
@@ -47,17 +57,8 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         cp = (PCPARAMS) GetWindowLongPtr(hwnd,0);
         hdc = BeginPaint(hwnd, &ps);
-        SelectObject(hdc, GetStockObject(ANSI_FIXED_FONT));
-        GetTextMetrics(hdc, &tm);
-        GetClientRect(hwnd, &windowRect);
-        for(i = 0; i <= cp->numChars / (windowRect.right / tm.tmAveCharWidth); i++) {
-            if (i * (windowRect.right / tm.tmAveCharWidth) + (windowRect.right / tm.tmAveCharWidth) >= cp->maxChars) {
-                printableChars = cp->maxChars - i * (windowRect.right / tm.tmAveCharWidth);
-                TextOut(hdc, 0, i * tm.tmHeight, cp->buffer + (i * windowRect.right / tm.tmAveCharWidth), printableChars);
-            } else {
-                TextOut(hdc, 0, i * tm.tmHeight, cp->buffer + (i * windowRect.right / tm.tmAveCharWidth), (windowRect.right / tm.tmAveCharWidth));
-            }
-        }
+
+        DisplayData(hwnd, hdc, cp);
 
         EndPaint(hwnd,&ps);
         return 0;

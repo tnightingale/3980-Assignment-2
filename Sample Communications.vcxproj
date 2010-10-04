@@ -84,8 +84,13 @@
     <ClCompile Include="WndProc.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="ManageConnection.h" />
+    <ClInclude Include="MenuItems.h" />
+    <ClInclude Include="Receive.h" />
+    <ClInclude Include="Transmit.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MainMenu.rc" />
