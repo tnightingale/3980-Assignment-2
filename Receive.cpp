@@ -18,6 +18,7 @@
 * It polls the device until it finds a character and then calls AddData() to 
 * add it into the output.
 *************************************************************************/
+/*
 VOID Receive(LPVOID params) {
     TCHAR buffer = NULL;
     DWORD read;
@@ -35,4 +36,38 @@ VOID Receive(LPVOID params) {
     }
 
     return;
+}
+*/
+
+VOID Receive(LPVOID params) {
+TCHAR inbuff[128];
+DWORD nBytesRead, dwEvent, dwError;
+COMSTAT cs;
+PCPARAMS cp = (PCPARAMS) params;
+
+	/* generate event whenever a byte arives */
+	SetCommMask (cp->hComm, EV_RXCHAR);
+	
+	/* read a byte whenever one is received */
+	while (cp->connectMode) {
+		/* wait for event */
+		if (WaitCommEvent (cp->hComm, &dwEvent, NULL)){
+			/* read all available bytes */
+			ClearCommError (cp->hComm, &dwError, &cs);
+			if ((dwEvent & EV_RXCHAR) && cs.cbInQue) {
+				if (!ReadFile(cp->hComm, inbuff, cs.cbInQue, &nBytesRead, NULL)){
+					/* handle error */
+				} /* end if (error reading bytes) */
+				else {
+					if (nBytesRead) {
+						AddMultiData(inbuff, nBytesRead, cp);//Add nBytesRead to the input buffer
+					}
+				}
+			}
+		} else {
+			// other error
+		}
+	} /* end while (reading bytes in loop) */
+	/* clean out any pending bytes in the receive buffer */
+	PurgeComm(cp->hComm, PURGE_RXCLEAR);
 }

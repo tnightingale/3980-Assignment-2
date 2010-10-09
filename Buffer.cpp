@@ -39,6 +39,14 @@ VOID AddData(TCHAR newData, PCPARAMS cp) {
     return;
 }
 
+VOID AddMultiData(PTCHAR newData, UINT numNewItems, PCPARAMS cp) {
+	UINT i;
+
+	for(i = 0; i < numNewItems; i++) {
+		AddData(newData[i], cp);
+	}
+}
+
 /************************************************************************
 * SOURCE FILE : Buffer.cpp 
 * PROGRAM     : Dumb Terminal
